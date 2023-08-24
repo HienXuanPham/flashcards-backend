@@ -23,4 +23,7 @@ def create_app(test_config=None):
     db.init_app(app)
     migrate.init_app(app, db)
 
+    from .routes import flashcards_bp
+    app.register_blueprint(flashcards_bp)
+
     return app
