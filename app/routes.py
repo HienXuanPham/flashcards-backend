@@ -55,3 +55,12 @@ def update_flashcard(flashcard_id):
     db.session.commit()
 
     return make_response(jsonify(f"Flashcard {flashcard_id} successfully updated."))
+
+@flashcards_bp.route("/<flashcard_id>", methods=["DELETE"])
+def delete_flashcard(flashcard_id):
+    flashcard = validate_flashcard(Flashcard, flashcard_id)
+
+    db.session.delete(flashcard)
+    db.session.commit()
+
+    return make_response(f"Flashcard #{flashcard_id} successfully deleted.")
