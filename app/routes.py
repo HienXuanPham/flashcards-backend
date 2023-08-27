@@ -19,10 +19,19 @@ def validate_flashcard(cls, flashcard_id):
 
     return flashcard
 
+def validate_request(cls, request_data):
+    try:
+        new_object = cls.create_new_object_from_request_data(request_data)
+    except KeyError as e:
+        abort(make_response({"message": f"Request body mest include {e}"}), 400)
+
+    return new_object
+
+# Routes
 @flashcards_bp.route("", methods=["POST"])
 def create_one_flashcard():
     request_body = request.get_json()
-    new_flashcard = Flashcard(term=request_body["term"], explanation=request_body["explanation"])
+    new_flashcard = validate_request(Flashcard, request_body)
 
     db.session.add(new_flashcard)
     db.session.commit()
@@ -30,7 +39,7 @@ def create_one_flashcard():
     return make_response(f"Flashcard {new_flashcard.term} successfully created", 201)
 
 @flashcards_bp.route("", methods=["GET"])
-def read_all_flashcards():
+def read_all_flashcards_or_read_by_term():
     term_query = request.args.get("term")
     if term_query:
         flashcards_query = Flashcard.query.filter(func.lower(Flashcard.term) == term_query.lower())
@@ -48,13 +57,15 @@ def update_flashcard(flashcard_id):
     flashcard = validate_flashcard(Flashcard, flashcard_id)
 
     request_body = request.get_json()
-    flashcard.term = request_body["term"]
-    flashcard.explanation = request_body["explanation"]
+    request_body_validated = validate_request(Flashcard, request_body)
 
-    db.session.add(flashcard)
-    db.session.commit()
+    if request_body_validated:
+        flashcard.term = request_body_validated.term
+        flashcard.explanation = request_body_validated.explanation
+        
+        db.session.commit()
 
-    return make_response(jsonify(f"Flashcard {flashcard_id} successfully updated."))
+    return make_response(jsonify(flashcard.convert_to_dict()), 200)
 
 @flashcards_bp.route("/<flashcard_id>", methods=["DELETE"])
 def delete_flashcard(flashcard_id):
