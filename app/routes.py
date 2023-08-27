@@ -15,7 +15,7 @@ def validate_flashcard(cls, flashcard_id):
     flashcard = Flashcard.query.get(flashcard_id)
 
     if not flashcard:
-        abort(make_response({"message": f"{cls.__name__} {flashcard_id} not found"}, 404))
+        abort(make_response({"message": f"{cls.__name__} #{flashcard_id} not found"}, 404))
 
     return flashcard
 
@@ -23,7 +23,7 @@ def validate_request(cls, request_data):
     try:
         new_object = cls.create_new_object_from_request_data(request_data)
     except KeyError as e:
-        abort(make_response({"message": f"Request body mest include {e}"}), 400)
+        abort(make_response({"message": f"Request body must include {e}"}), 400)
 
     return new_object
 
@@ -48,7 +48,7 @@ def read_all_flashcards_or_read_by_term():
 
     flashcards_response = []
     for flashcard in flashcards_query:
-        flashcards_response.append(flashcard.convert_to_dict())
+        flashcards_response.append(flashcard.convert_to_dictionary())
 
     return make_response(jsonify(flashcards_response), 200)
 
@@ -62,10 +62,10 @@ def update_flashcard(flashcard_id):
     if request_body_validated:
         flashcard.term = request_body_validated.term
         flashcard.explanation = request_body_validated.explanation
-        
+
         db.session.commit()
 
-    return make_response(jsonify(flashcard.convert_to_dict()), 200)
+    return make_response(jsonify(flashcard.convert_to_dictionary()), 200)
 
 @flashcards_bp.route("/<flashcard_id>", methods=["DELETE"])
 def delete_flashcard(flashcard_id):
