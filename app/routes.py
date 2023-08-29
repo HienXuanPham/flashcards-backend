@@ -12,7 +12,6 @@ def validate_flashcard(cls, flashcard_id):
     except:
         abort(make_response({"message": f"{cls.__name__} {flashcard_id} invalid"}, 400))
 
-    # flashcard = Flashcard.query.get(flashcard_id)
     flashcard = db.session.get(Flashcard, flashcard_id)
 
     if not flashcard:

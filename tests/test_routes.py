@@ -47,7 +47,6 @@ def test_update_flashcard(client, three_saved_flashcards):
     "explanation": "Shared code used to perform setup and cleanup for test"
   })
   response_body = response.get_json()
-  print(response_body)
 
   assert response.status_code == 200
   assert response_body ==  {'explanation': 'Shared code used to perform setup and cleanup for test', 'flashcard_id': 1, 'term': 'fixture'}
