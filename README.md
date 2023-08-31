@@ -1,7 +1,7 @@
-### Flashcards Backend
+# Flashcards Backend
 It is a server backend to create, read, update, and delete flashcards. The server is built by utilizing the Flask framework to create the application and PostgreSQL to manage the database.
 
-# Setup
+## Setup
 1. Fork and clone this repo.
 
 2. Set up a visual environment
